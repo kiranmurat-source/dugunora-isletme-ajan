@@ -1,0 +1,802 @@
+{
+  "sunucu": "dugunora-isletme",
+  "talimat": "Düğünora işletme hesabı: işletmenin gündemi, talepleri, teklifleri, takvimi, görevleri, yorumları, sayfası, kampanyaları, menü fiyatları ve dönem özeti okunur; Düğünora Ajans ekibinden temsilci istenebilir. Çiftlerin telefon ve e-posta bilgileri sonuçlarda yer almaz. Mesaj, teklif ve yorum yanıtı yalnız taslak olarak hazırlanır; çifte ya da yoruma hiçbir şey gitmez, gönderimi işletme panelde onaylayarak kendisi yapar. Randevu, not ve takvim günü önizlemeyle hazırlanır; kullanıcı açıkça onaylarsa isletme_onayla ile kaydedilir. Görev doğrudan eklenir ya da tamamlanır ve İşletme panelinden geri alınabilir. Talep kapatma İşletme panelinden yapılır. Dönem özeti yalnız talep, yanıt, teklif ve anlaşma sayılarını verir. Sayfa metni ve menü fiyatı yalnız taslak olarak hazırlanır; işletme panelde açıp kaydeder ve Düğünora onayına gönderir, sayfada kendiliğinden bir şey değişmez.",
+  "araclar": [
+    {
+      "name": "gundem",
+      "title": "Gündemim",
+      "description": "Bugünkü gündem: yanıt bekleyen çift sayısı, bugünkü randevu sayısı, açık görev sayısı.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Gündemim",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "temsilci_iste",
+      "title": "Temsilci iste",
+      "description": "Düğünora Ajans ekibinden temsilci ister. Yalnız kullanıcı açıkça temsilci, insan ya da Düğünora ekibiyle görüşmek isterse çağrılır.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "neden": {
+            "type": "string",
+            "maxLength": 500,
+            "description": "Kullanıcının kendi sözleriyle kısa neden"
+          }
+        }
+      },
+      "annotations": {
+        "title": "Temsilci iste",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "talep_ozeti",
+      "title": "Talep özeti",
+      "description": "İşletmenin taleplerinin durum sayıları: bekleyen, görüşülen, anlaşılan, olumsuz, ulaşılamayan.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Talep özeti",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "talep_ac",
+      "title": "Talep ayrıntısı",
+      "description": "Tek talebin ayrıntısı: durum, tarih, bütçe, mesajlar, notlar, randevular. Numara verilmezse yanıt bekleyen en eski talep açılır. Talebi görüntülendi yapmaz. Çiftin telefon ve e-postası dönmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          }
+        }
+      },
+      "annotations": {
+        "title": "Talep ayrıntısı",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "teklifler",
+      "title": "Tekliflerim",
+      "description": "Bir talebe gönderilen tekliflerin kalemleri, toplamı ve kapora koşulu. Çiftin telefon ve e-postası dönmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          }
+        },
+        "required": [
+          "talep_no"
+        ]
+      },
+      "annotations": {
+        "title": "Tekliflerim",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "sablonlar",
+      "title": "Mesaj şablonlarım",
+      "description": "İşletmenin kayıtlı mesaj şablonları.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Mesaj şablonlarım",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "takvim",
+      "title": "Takvimim",
+      "description": "Belirli bir aralıktaki doluluk ve randevular. Başlangıç YYYY-AA-GG (varsayılan bugün), gün sayısı en çok 62 (varsayılan 31). Çiftin telefon ve e-postası dönmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "baslangic": {
+            "type": "string",
+            "description": "YYYY-AA-GG"
+          },
+          "gun": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 62
+          }
+        }
+      },
+      "annotations": {
+        "title": "Takvimim",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "gorevler",
+      "title": "Görevlerim",
+      "description": "İşletmenin görev listesi. Çiftin telefon ve e-postası dönmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Görevlerim",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "anlasma_durumu",
+      "title": "Anlaşma durumu",
+      "description": "Anlaşma durumlarının sayıları; talep numarası verilirse o talebin anlaşma durumu.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          }
+        }
+      },
+      "annotations": {
+        "title": "Anlaşma durumu",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "yorumlar",
+      "title": "Yorumlarım",
+      "description": "İşletmeye yazılan en yeni 50 yorum ve işletmenin yanıtları. Çiftin telefon ve e-postası dönmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Yorumlarım",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "sayfam",
+      "title": "Sayfam",
+      "description": "İşletme sayfasının özeti: ad, durum, konum, kategoriler, fiyat ve fotoğraf sayısı.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Sayfam",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "uyeligim",
+      "title": "Üyeliğim",
+      "description": "Üyelik planı, bitiş tarihi, abonelik durumu ve aylık pazarlama kredisi.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Üyeliğim",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "ekibim",
+      "title": "Ekibim",
+      "description": "İşletme ekibinin adları ve görevleri.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Ekibim",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "mesaj_taslagi",
+      "title": "Mesaj taslağı",
+      "description": "Bir talebe çifte gidecek mesajın taslağını hazırlar; çifte hiçbir şey gönderilmez. İşletme bağlantıyı açıp kontrol eder ve kendisi gönderir. Taslak 7 gün geçerlidir.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          },
+          "metin": {
+            "type": "string",
+            "maxLength": 600,
+            "description": "Mesaj metni"
+          }
+        },
+        "required": [
+          "talep_no",
+          "metin"
+        ]
+      },
+      "annotations": {
+        "title": "Mesaj taslağı",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "teklif_taslagi",
+      "title": "Teklif taslağı",
+      "description": "Bir talep için teklif taslağı hazırlar; çifte hiçbir şey gönderilmez. Menü ve fiyatlar işletme sayfasındaki kayıttan gelir, burada kişi sayısı, ek kalemler ve not verilir. İşletme bağlantıyı açıp kontrol eder ve kendisi gönderir. Taslak 7 gün geçerlidir.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          },
+          "kisi": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 5000,
+            "description": "Misafir sayısı"
+          },
+          "kalemler": {
+            "type": "array",
+            "maxItems": 6,
+            "description": "Ek kalemler",
+            "items": {
+              "type": "object",
+              "properties": {
+                "ad": {
+                  "type": "string",
+                  "maxLength": 60
+                },
+                "birim": {
+                  "type": "string",
+                  "enum": [
+                    "kisi",
+                    "paket",
+                    "adet"
+                  ]
+                },
+                "miktar": {
+                  "type": "number"
+                },
+                "birim_fiyat": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "ad",
+                "birim",
+                "miktar",
+                "birim_fiyat"
+              ]
+            }
+          },
+          "notu": {
+            "type": "string",
+            "maxLength": 400,
+            "description": "Çifte görünecek not"
+          }
+        },
+        "required": [
+          "talep_no"
+        ]
+      },
+      "annotations": {
+        "title": "Teklif taslağı",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "yorum_yaniti_taslagi",
+      "title": "Yorum yanıtı taslağı",
+      "description": "Bir yoruma işletme yanıtının taslağını hazırlar; yorum yayınlanmaz. Yorum numarası `yorumlar` sonucundan alınır. İşletme bağlantıyı açıp kontrol eder ve kendisi yayınlar. Taslak 7 gün geçerlidir.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "yorum_no": {
+            "type": "string",
+            "description": "Yorum numarası (`yorumlar` sonucundan)"
+          },
+          "metin": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 600,
+            "description": "Yanıt metni"
+          }
+        },
+        "required": [
+          "yorum_no",
+          "metin"
+        ]
+      },
+      "annotations": {
+        "title": "Yorum yanıtı taslağı",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "bos_saatler",
+      "title": "Boş saatler",
+      "description": "Görüşme ya da gezi için boş saatleri gün gün listeler. Tür görüşme (varsayılan) ya da gezi; başlangıç YYYY-AA-GG (varsayılan bugün); gün sayısı 1-14 (varsayılan 7). Ekip üyelerinin kimliği dönmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tur": {
+            "type": "string",
+            "enum": [
+              "gorusme",
+              "gezi"
+            ]
+          },
+          "baslangic": {
+            "type": "string",
+            "description": "YYYY-AA-GG"
+          },
+          "gun": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 14
+          }
+        }
+      },
+      "annotations": {
+        "title": "Boş saatler",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "not_ekle",
+      "title": "Not ekle",
+      "description": "Bir talebe işletme notu için önizleme hazırlar; henüz kaydedilmez. Kullanıcı açıkça onaylarsa isletme_onayla ile kaydedilir. Not çifte görünmez.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          },
+          "metin": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Not metni"
+          }
+        },
+        "required": [
+          "talep_no",
+          "metin"
+        ]
+      },
+      "annotations": {
+        "title": "Not ekle",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "randevu_ekle",
+      "title": "Randevu ekle",
+      "description": "Bir talebe randevu için önizleme hazırlar; henüz kaydedilmez. Kullanıcı açıkça onaylarsa isletme_onayla ile kaydedilir. Görüşme randevusunda sorumlu verilmezse boş olan ilk yetkili atanır; sorumlu adı ekibim sonucundan alınır. Boş saatler bos_saatler ile görülür.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          },
+          "tarih": {
+            "type": "string",
+            "description": "YYYY-AA-GG"
+          },
+          "saat": {
+            "type": "string",
+            "description": "SS:DD"
+          },
+          "tur": {
+            "type": "string",
+            "enum": [
+              "gorusme",
+              "gezi",
+              "tadim",
+              "sozlesme"
+            ]
+          },
+          "sorumlu": {
+            "type": "string",
+            "maxLength": 80,
+            "description": "Ekip üyesinin adı (ekibim sonucundan)"
+          },
+          "not": {
+            "type": "string",
+            "maxLength": 200,
+            "description": "Randevu notu"
+          }
+        },
+        "required": [
+          "talep_no",
+          "tarih",
+          "saat",
+          "tur"
+        ]
+      },
+      "annotations": {
+        "title": "Randevu ekle",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "randevu_iptal",
+      "title": "Randevu iptal",
+      "description": "Bir talebin planlı randevusunu iptal etmek için önizleme hazırlar; henüz iptal edilmez. Kullanıcı açıkça onaylarsa isletme_onayla ile kaydedilir. Randevu talep numarası, tarih ve saatle bulunur.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          },
+          "tarih": {
+            "type": "string",
+            "description": "YYYY-AA-GG"
+          },
+          "saat": {
+            "type": "string",
+            "description": "SS:DD"
+          }
+        },
+        "required": [
+          "talep_no",
+          "tarih",
+          "saat"
+        ]
+      },
+      "annotations": {
+        "title": "Randevu iptal",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "gun_isaretle",
+      "title": "Takvimde gün işaretle",
+      "description": "Takvimde bir günü Boş ya da Dolu işaretlemek için önizleme hazırlar; henüz kaydedilmez. Kullanıcı açıkça onaylarsa isletme_onayla ile kaydedilir. Dolu gün için sebep zorunludur.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tarih": {
+            "type": "string",
+            "description": "YYYY-AA-GG"
+          },
+          "durum": {
+            "type": "string",
+            "enum": [
+              "bos",
+              "dolu"
+            ]
+          },
+          "sebep": {
+            "type": "string",
+            "enum": [
+              "platform_disi_satis",
+              "ozel_etkinlik",
+              "bakim_tadilat",
+              "isletme_kapali",
+              "diger"
+            ],
+            "description": "Dolu için zorunlu"
+          }
+        },
+        "required": [
+          "tarih",
+          "durum"
+        ]
+      },
+      "annotations": {
+        "title": "Takvimde gün işaretle",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "talep_kapat",
+      "title": "Talebi kapat",
+      "description": "Bir talebi Olumsuz ya da Ulaşılamayan olarak kapatmak için önizleme hazırlar. Kapatma nedeni kullanıcıya sorulur, varsayılan yoktur. Bağlı işletme hesabında talep kapatma İşletme panelinden yapılır ve bağlantı döner.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          },
+          "neden": {
+            "type": "string",
+            "enum": [
+              "fiyat",
+              "tarih_dolu",
+              "kapasite",
+              "baska_firma",
+              "ulasilamadi",
+              "diger"
+            ],
+            "description": "Kapatma nedeni (kullanıcıya sorulur)"
+          }
+        },
+        "required": [
+          "talep_no"
+        ]
+      },
+      "annotations": {
+        "title": "Talebi kapat",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "gorev_ekle",
+      "title": "Görev ekle",
+      "description": "İşletme görev listesine görev ekler. Doğrudan kaydedilir ve İşletme panelindeki Yapay zeka bağlantıları ekranından geri alınabilir. Vade gün (YYYY-AA-GG, saat 09:00 alınır) ya da tam zaman olabilir; talep numarası verilirse görev talebe bağlanır.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "baslik": {
+            "type": "string",
+            "maxLength": 140,
+            "description": "Görev başlığı"
+          },
+          "vade": {
+            "type": "string",
+            "description": "YYYY-AA-GG ya da ISO zaman"
+          },
+          "talep_no": {
+            "type": "string",
+            "description": "Talep numarası"
+          }
+        },
+        "required": [
+          "baslik",
+          "vade"
+        ]
+      },
+      "annotations": {
+        "title": "Görev ekle",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "gorev_tamamla",
+      "title": "Görevi tamamla",
+      "description": "Bir görevi tamamlandı yapar. Doğrudan kaydedilir ve İşletme panelindeki Yapay zeka bağlantıları ekranından geri alınabilir. Görev numarası gorevler sonucundan alınır.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "gorev_no": {
+            "type": "string",
+            "description": "Görev numarası (gorevler sonucundan)"
+          }
+        },
+        "required": [
+          "gorev_no"
+        ]
+      },
+      "annotations": {
+        "title": "Görevi tamamla",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "isletme_onayla",
+      "title": "Önizlemeyi kaydet",
+      "description": "Hazırlanmış önizlemeyi kaydeder. Yalnız kullanıcı önizlemeyi görüp açıkça onayladıktan sonra çağrılır; onay_id ve surum önizleme sonucundan aynen alınır.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "onay_id": {
+            "type": "string",
+            "description": "Önizleme sonucundaki onay_id"
+          },
+          "surum": {
+            "type": "integer",
+            "description": "Önizleme sonucundaki surum"
+          }
+        },
+        "required": [
+          "onay_id",
+          "surum"
+        ]
+      },
+      "annotations": {
+        "title": "Önizlemeyi kaydet",
+        "readOnlyHint": false,
+        "destructiveHint": true,
+        "idempotentHint": true,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "donem_ozeti",
+      "title": "Dönem özeti",
+      "description": "Seçilen dönemin talep, yanıt verilen, teklif gönderilen ve anlaşma sayıları ile bir önceki dönemin talep ve anlaşma sayıları. Dönem 30 (varsayılan), 90, 365 ya da 730 gün olabilir.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "gun": {
+            "type": "integer",
+            "enum": [
+              30,
+              90,
+              365,
+              730
+            ],
+            "description": "Dönem uzunluğu (gün)"
+          }
+        }
+      },
+      "annotations": {
+        "title": "Dönem özeti",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "kampanyalar",
+      "title": "Kampanyalar",
+      "description": "Düğünora sezon kampanyaları: koşulları, tarih aralığı ve işletmenin katılım durumu. Katılım ve ayrılma İşletme panelinden yapılır.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Kampanyalar",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "fiyatlarim",
+      "title": "Fiyatlarım",
+      "description": "İşletme sayfasındaki menülerin fiyatları: menü numarası, sayfa, servis, hafta içi ve hafta sonu fiyatı. Menü numarası fiyat taslağında kullanılır.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      },
+      "annotations": {
+        "title": "Fiyatlarım",
+        "readOnlyHint": true,
+        "destructiveHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "sayfa_metin_taslagi",
+      "title": "Sayfa metni taslağı",
+      "description": "İşletme sayfasının tanıtım metni ve kısa tanıtımı için taslak hazırlar; sayfada hiçbir şey değişmez. İşletme bağlantıyı açıp kontrol eder, kaydeder ve Düğünora onayına gönderir. Taslak 7 gün geçerlidir.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hakkinda": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1500,
+            "description": "Tanıtım metni"
+          },
+          "slogan": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80,
+            "description": "Kısa tanıtım"
+          }
+        }
+      },
+      "annotations": {
+        "title": "Sayfa metni taslağı",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    },
+    {
+      "name": "fiyat_taslagi",
+      "title": "Fiyat taslağı",
+      "description": "Bir menünün hafta içi ve hafta sonu fiyatı için taslak hazırlar; sayfada hiçbir şey değişmez. Menü numarası `fiyatlarim` sonucundan alınır; tek_fiyat dolu menüde yalnız hafta içi fiyatını verin. İşletme bağlantıyı açıp kontrol eder, kaydeder ve Düğünora onayına gönderir. Taslak 7 gün geçerlidir.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "menu_no": {
+            "type": "string",
+            "description": "Menü numarası (`fiyatlarim` sonucundan)"
+          },
+          "hafta_ici": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000,
+            "description": "Hafta içi fiyatı (TL)"
+          },
+          "hafta_sonu": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000,
+            "description": "Hafta sonu fiyatı (TL)"
+          }
+        },
+        "required": [
+          "menu_no"
+        ]
+      },
+      "annotations": {
+        "title": "Fiyat taslağı",
+        "readOnlyHint": false,
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false
+      }
+    }
+  ]
+}
