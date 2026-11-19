@@ -38,7 +38,9 @@ function kodBekle(): Promise<string> {
     const s = createServer((istek, yanit) => {
       const u = new URL(istek.url ?? "/", DONUS);
       if (u.pathname !== "/geri") { yanit.writeHead(404).end(); return; }
-      const kod = u.searchParams.get("state") === DURUM ? u.searchParams.get("code") : null;
+      // state uymayan istek (başka sekme vb.) akışı bitirmez; gerçek dönüş beklenmeye devam eder.
+      if (u.searchParams.get("state") !== DURUM) { yanit.writeHead(400).end(); return; }
+      const kod = u.searchParams.get("code");
       yanit.writeHead(200, { "content-type": "text/plain; charset=utf-8" }).end(kod ? "Bağlantı tamam, bu sekmeyi kapatabilirsiniz." : "Bağlantı onaylanmadı.");
       s.close();
       if (kod) coz(kod); else reddet(new Error(u.searchParams.get("error") ?? "kod yok"));
